@@ -18,13 +18,13 @@ def simulate_bsc_file(input_file, output_file, p):
     in_sequence = ''.join(format(byte, '08b') for byte in data)
 
     # Apply the encoding with repetition
-    encode_sequence = encoder_repetition(in_sequence, 3)
+    encode_sequence = encoder_hamming(in_sequence, 3)
 
     # Apply the binary symmetric channel
     out_sequence = binary_symmetric_channel(encode_sequence, p)
 
     # Apply the decoding with repetition
-    decode_sequence = decoder_repetition(out_sequence, 3)
+    decode_sequence = decoder_hamming(out_sequence, 3)
 
     # Calculate the number of bit errors for BER' and BER
     bit_errors_1 = sum(a != b for a, b in zip(in_sequence, decode_sequence))

@@ -1,6 +1,6 @@
 
 
 
-def decoder_repetition():
+def decoder_hamming():
 
 

@@ -1,2 +1,7 @@
 
 
+
+def encoder_hamming:
+
+
+
