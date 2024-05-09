@@ -1,6 +1,6 @@
 from EX1.binary_symetric_channel import binary_symmetric_channel
-from EX1.repetition.decoder_repetition import decoder_repetition
-from EX1.repetition.encoder_repetition import encoder_repetition
+from EX1.hamming.decoder_hamming import decoder_hamming
+from EX1.hamming.encoder_hamming import encoder_hamming
 
 probability = 0.005  # BER
 in_file_path = 'test_files/alice29.txt'  # File to be transmitted
@@ -18,13 +18,13 @@ def simulate_bsc_file(input_file, output_file, p):
     in_sequence = ''.join(format(byte, '08b') for byte in data)
 
     # Apply the encoding with repetition
-    encode_sequence = encoder_hamming(in_sequence, 3)
+    encode_sequence = encoder_hamming(in_sequence)
 
     # Apply the binary symmetric channel
     out_sequence = binary_symmetric_channel(encode_sequence, p)
 
     # Apply the decoding with repetition
-    decode_sequence = decoder_hamming(out_sequence, 3)
+    decode_sequence = decoder_hamming(out_sequence)
 
     # Calculate the number of bit errors for BER' and BER
     bit_errors_1 = sum(a != b for a, b in zip(in_sequence, decode_sequence))

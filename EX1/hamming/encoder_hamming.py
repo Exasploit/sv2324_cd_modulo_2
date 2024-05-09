@@ -1,7 +1,7 @@
 
 
 
-def encoder_hamming:
+def encoder_hamming(in_sequence):
 
 
 
