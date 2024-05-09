@@ -1,4 +1,5 @@
 from EX1.binary_symetric_channel import binary_symmetric_channel
+from EX1.repetition.encoder_repetition import encoder_repetition
 
 probability = 0.005  # BER
 in_file_path = 'TestFilesEX6/alice29.txt'  # File to be transmitted
@@ -15,8 +16,11 @@ def simulate_bsc_file(input_file, output_file, p):
     # Convert the bytes to a binary string
     in_sequence = ''.join(format(byte, '08b') for byte in data)
 
+    # Apply the encoding with repetition
+    encode_sequence = encoder_repetition(in_sequence, 3)
 
-    out_sequence = binary_symmetric_channel(in_sequence, p)
+    # Apply the binary symmetric channel
+    out_sequence = binary_symmetric_channel(encode_sequence, p)
 
 
 
