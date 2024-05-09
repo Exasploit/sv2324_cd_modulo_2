@@ -1,8 +1,8 @@
 from EX1.binary_symetric_channel import binary_symmetric_channel
 
 probability = 0.005  # BER
-in_file_path = 'TestFilesEX6/alice29.txt'  # File to be transmitted
-out_file_path = 'TestFilesEX6/alice29_out.txt'  # File to be received
+in_file_path = 'test_files/alice29.txt'  # File to be transmitted
+out_file_path = 'test_files/alice29_out.txt'  # File to be received
 
 
 # EX 6, c
