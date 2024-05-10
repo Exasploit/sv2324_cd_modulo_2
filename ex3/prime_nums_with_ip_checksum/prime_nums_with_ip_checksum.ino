@@ -4,8 +4,11 @@ bool isPrime(int num);
 unsigned long induceErrors(unsigned long data, float ber);
 unsigned int ipChecksum(byte *addr, int count);
 
+//Global variables
 unsigned long number = 2; // Start with the first prime number
-float ber = 0.01; // Bit Error Rate set to 2%
+bool inducedErrors = true; // Flag to indicate if errors should be induced
+float ber = 0.02; // Bit Error Rate set to 2%
+unsigned long primesUntil = 1000000; // Generate primes until this number then stop
 
 void setup() {
   Serial.begin(9600); // Start serial communication at 9600 baud rate
@@ -17,15 +20,25 @@ void loop() {
   if (isPrime(number)) {
     // First, calculate the IP checksum for the pristine data
     unsigned int checksum = ipChecksum((byte*)&number, sizeof(number));
+
     // Then induce errors in the data based on the BER, if simulating error conditions
-    unsigned long dataWithError = induceErrors(number, ber);
+    unsigned long finalData = number;
+    if (inducedErrors) {
+      finalData = induceErrors(number, ber);
+    }
     // Print the data with errors and checksum to the serial monitor
-    Serial.print(dataWithError);
+    Serial.print(finalData);
     Serial.print(","); // Delimiter between data and checksum
     Serial.println(checksum);
     delay(1000); // Wait for 1 second before processing the next number
   }
-  number++; // Increment the number to check the next integer
+  // Increment the number to check the next integer
+  number++; 
+
+    // If the number exceeds the limit, reset it to 2 to start over
+  if(number > primesUntil) {
+    number = 2;
+  }
 }
 
 // Function to check if a number is prime
