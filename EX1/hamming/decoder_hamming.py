@@ -1,34 +1,38 @@
+def decoder_hamming(encoded_sequence):
+    H = [
+        [1, 1, 0, 1, 1, 0, 0],
+        [1, 0, 1, 1, 0, 1, 0],
+        [0, 1, 1, 1, 0, 0, 1]
+    ]
+
+    error_patterns = {
+        (0, 0, 0): None, (0, 0, 1): 6, (0, 1, 0): 5,
+        (0, 1, 1): 4, (1, 0, 0): 3, (1, 0, 1): 2,
+        (1, 1, 0): 1, (1, 1, 1): 0
+    }
+
+    decoded_sequence = ''
+    for i in range(0, len(encoded_sequence), 7):
+        codeword = list(map(int, encoded_sequence[i:i+7]))
+        syndrome = [0] * 3
+        for j in range(3):
+            for k in range(7):
+                syndrome[j] ^= H[j][k] * codeword[k]
+        syndrome_tuple = tuple(syndrome)
+        error_position = error_patterns.get(syndrome_tuple)
+        if error_position is not None and error_position < 4:
+            codeword[error_position] ^= 1
+        decoded_sequence += ''.join(str(bit) for bit in codeword[:4])
+
+    return decoded_sequence
+
+def test_decoder():
+    encoded = '1011001'  # corresponds to data bits '1011'
+    assert decoder_hamming(encoded) == '1011', "Test Failed: No error decoding failed"
+    # Introduce a single error in the second bit
+    encoded_error = '1111001'
+    assert decoder_hamming(encoded_error) == '1011', "Test Failed: Single bit error decoding failed"
+    print("All decoder tests passed!")
 
 
-# in_sequence: string of bits to encode
-def decoder_hamming(in_sequence):
-    # Calculate the number of parity bits
-    m = 0
-    while 2 ** m < len(in_sequence) + m + 1:
-        m += 1
-
-    # Create the parity check matrix
-    parity_check_matrix = [[int(bin(i)[2:].zfill(m)[j]) for j in range(m)] for i in range(1, 2 ** m) if bin(i).count('1') % 2 == 1]
-
-    # Create the generator matrix
-    generator_matrix = [[int(bin(i)[2:].zfill(m)[j]) for j in range(m)] for i in range(1, 2 ** m) if bin(i).count('1') % 2 == 0]
-
-    # Create the syndrome table
-    syndrome_table = {}
-    for i in range(2 ** m):
-        syndrome_table[''.join(str(int(a) % 2) for a in np.dot(parity_check_matrix, [int(a) for a in bin(i)[2:].zfill(m)]))] = i
-
-    # Group the sequence into codewords
-    codewords = [in_sequence[i:i + m] for i in range(0, len(in_sequence), m)]
-
-    # Decode the sequence
-    out_sequence = ''
-    for codeword in codewords:
-        syndrome = ''.join(str(int(a) % 2) for a in np.dot(parity_check_matrix, [int(a) for a in codeword]))
-        if syndrome == '0' * len(syndrome):
-            out_sequence += codeword[:-m]
-        else:
-            error_position = syndrome_table[syndrome]
-            out_sequence += ''.join(str(int(a) % 2) for a in np.dot(generator_matrix, [int(a) for a in codeword]))[:-m]
-
-    return out_sequence
+test_decoder()

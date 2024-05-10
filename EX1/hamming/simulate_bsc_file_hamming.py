@@ -1,6 +1,6 @@
-from EX1.binary_symetric_channel import binary_symmetric_channel
-from EX1.hamming.decoder_hamming import decoder_hamming
-from EX1.hamming.encoder_hamming import encoder_hamming
+from ex1.binary_symetric_channel import binary_symmetric_channel
+from ex1.hamming.decoder_hamming import decoder_hamming
+from ex1.hamming.encoder_hamming import encoder_hamming
 
 probability = 0.005  # BER
 in_file_path = 'test_files/alice29.txt'  # File to be transmitted
@@ -10,21 +10,18 @@ out_file_path = 'test_files/alice29_out.txt'  # File to be received
 # EX 6, c
 # Function to simulate a binary symmetric channel that receives a file as input and a BER and writes the output to a file
 def simulate_bsc_file(input_file, output_file, p):
-    # Read the input file with bytes
-    with open(input_file, 'rb') as input_file:
-        data = input_file.read()
+    with open(input_file, 'rb') as file:
+        data = file.read()
 
-    # Convert the bytes to a binary string
     in_sequence = ''.join(format(byte, '08b') for byte in data)
+    chunks = [in_sequence[i:i + 4] for i in range(0, len(in_sequence), 4)]
+    encode_sequence = ''.join(''.join(map(str, encoder_hamming(list(map(int, chunk)))))
+                              for chunk in chunks if len(chunk) == 4)
 
-    # Apply the encoding with repetition
-    encode_sequence = encoder_hamming(in_sequence)
-
-    # Apply the binary symmetric channel
     out_sequence = binary_symmetric_channel(encode_sequence, p)
+    decode_chunks = [out_sequence[i:i + 7] for i in range(0, len(out_sequence), 7)]
+    decode_sequence = ''.join(decoder_hamming(chunk) for chunk in decode_chunks)
 
-    # Apply the decoding with repetition
-    decode_sequence = decoder_hamming(out_sequence)
 
     # Calculate the number of bit errors for BER' and BER
     bit_errors_1 = sum(a != b for a, b in zip(in_sequence, decode_sequence))
