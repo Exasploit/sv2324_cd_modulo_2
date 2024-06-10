@@ -5,20 +5,26 @@ from EX2.burst_channel import burst_channel
 
 def test_src():
     k_bits = 1024  # Number of bits in block
-    burst_length = 100  # Length of burst (Change values to test different scenarios)
+    burst_length = 11  # Length of burst (Change values to test different scenarios)
     generator = '1011'  # CRC
-    data = "1001011" * (k_bits // 7)  # Data to be transmitted
+    data = ''.join(random.choice('01') for _ in range(k_bits))  # Generate random data
     print("Data: " + data)
     print("Generator: " + generator)
 
-    burst_data = burst_channel(data, burst_length)  # Apply burst channel
-    src = cyclic_redundancy_check(burst_data, generator)  # Apply CRC
-    print("Remainder: " + src)
-    print(len(generator))
-    if src == '0' * (len(generator) - 1):
-        print("No errors detected!")
+    new_data = ""
+    for i in range(0, len(data), 1024):
+        src = cyclic_redundancy_check(data[i:i + 1024], generator)
+        new_data += data[i:i + 1024] + src
+
+    burst = burst_channel(new_data, burst_length)
+
+    src_check = cyclic_redundancy_check(burst, generator)
+    print("CRC: " + src_check)
+    if src_check == '0' * (len(generator) - 1):
+        print("No errors")
     else:
-        print("Errors detected!")
+        print("Errors")
+
 
 
 test_src()
