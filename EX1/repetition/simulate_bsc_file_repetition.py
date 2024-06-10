@@ -2,7 +2,7 @@ from EX1.binary_symetric_channel import binary_symmetric_channel
 from EX1.repetition.decoder_repetition import decoder_repetition
 from EX1.repetition.encoder_repetition import encoder_repetition
 
-probability = 0.005  # BER
+probability = 0.0005  # BER
 in_file_path = 'test_files/alice29.txt'  # File to be transmitted
 out_file_path = 'test_files/alice29_out.txt'  # File to be received
 
@@ -14,6 +14,7 @@ def simulate_bsc_file(input_file, output_file, p):
     with open(input_file, 'rb') as input_file:
         data = input_file.read()
 
+    print(input_file)
     # Convert the bytes to a binary string
     in_sequence = ''.join(format(byte, '08b') for byte in data)
 

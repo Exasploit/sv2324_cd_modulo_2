@@ -21,6 +21,7 @@ def encoder_hamming(data_bits):
    # print("Debug - Encoded bits:", encoded_string)  # Print encoded string for debugging
     return encoded_string
 
+
 def test_encoder():
     # Updating the expected result based on the corrected understanding
     assert encoder_hamming([1, 0, 1, 1]) == '1011010', "Test Failed: [1, 0, 1, 1] should encode to '1011010'"

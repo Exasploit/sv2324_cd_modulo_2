@@ -1,8 +1,8 @@
-from ex1.binary_symetric_channel import binary_symmetric_channel
-from ex1.hamming.decoder_hamming import decoder_hamming
-from ex1.hamming.encoder_hamming import encoder_hamming
+from EX1.binary_symetric_channel import binary_symmetric_channel
+from EX1.hamming.decoder_hamming import decoder_hamming
+from EX1.hamming.encoder_hamming import encoder_hamming
 
-probability = 0.005  # BER
+probability = 0.0000005  # BER
 in_file_path = 'test_files/alice29.txt'  # File to be transmitted
 out_file_path = 'test_files/alice29_out.txt'  # File to be received
 

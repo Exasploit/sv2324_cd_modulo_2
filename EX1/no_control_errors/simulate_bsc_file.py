@@ -1,6 +1,6 @@
 from EX1.binary_symetric_channel import binary_symmetric_channel
 
-probability = 0.005  # BER
+probability = 0.0005  # BER
 in_file_path = 'test_files/alice29.txt'  # File to be transmitted
 out_file_path = 'test_files/alice29_out.txt'  # File to be received
 
@@ -19,6 +19,16 @@ def simulate_bsc_file(input_file, output_file, p):
     # Write the output file with bytes
     with open(output_file, 'wb') as output_file:
         output_file.write(bytes(int(out_sequence[i:i + 8], 2) for i in range(0, len(out_sequence), 8)))
+
+    # Calculate the number of bit errors for and BER
+    bit_errors = sum(a != b for a, b in zip(in_sequence, out_sequence))
+
+    # Calculate the total number of bits
+    total_bits = len(in_sequence)
+
+    # Calculate the BER
+    BER = bit_errors / total_bits
+    print(f"BER for the file {in_file_path} is {BER}, with p = {p}")
 
     # Group the sequences into bytes
     in_bytes = [in_sequence[i:i + 8] for i in range(0, len(in_sequence), 8)]
