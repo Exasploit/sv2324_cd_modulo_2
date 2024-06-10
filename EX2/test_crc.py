@@ -5,7 +5,7 @@ from EX2.burst_channel import burst_channel
 
 def test_src():
     k_bits = 1024  # Number of bits in block
-    burst_length = 11  # Length of burst (Change values to test different scenarios)
+    burst_length = 100  # Length of burst (Change values to test different scenarios)
     generator = '1011'  # CRC
     data = ''.join(random.choice('01') for _ in range(k_bits))  # Generate random data
     print("Data: " + data)
