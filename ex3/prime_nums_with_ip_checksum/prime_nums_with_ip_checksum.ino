@@ -1,17 +1,24 @@
 #include <Arduino.h>
 
+void loop2();
 bool isPrime(int num);
-unsigned long induceErrors(unsigned long data, float ber);
+unsigned long induceErrors(unsigned long data, float ber, float probabilityBurst, float probabilityIsolated);
+unsigned long induceBurstErrors(unsigned long data, int burstLength);
+unsigned long induceIsolatedErrors(unsigned long data, float ber);
 unsigned int ipChecksum(byte *addr, int count);
 
-//Global variables
+// Global variables
 unsigned long number = 2; // Start with the first prime number
 bool inducedErrors = true; // Flag to indicate if errors should be induced
-float ber = 0.02; // Bit Error Rate set to 2%
+float probabilityBurst = 25.0; // Probability of inducing burst errors (in percentage)
+float probabilityIsolated = 75.0; // Probability of inducing isolated errors (in percentage)
+float ber = 0.00; // Bit Error Rate for isolated errors
+int burstLength = 5; // Length of burst errors
 unsigned long primesUntil = 1000000; // Generate primes until this number then stop
 
 void setup() {
   Serial.begin(9600); // Start serial communication at 9600 baud rate
+
   randomSeed(analogRead(0)); // Initialize the random number generator with a somewhat random seed from an analog pin
 }
 
@@ -21,10 +28,10 @@ void loop() {
     // First, calculate the IP checksum for the pristine data
     unsigned int checksum = ipChecksum((byte*)&number, sizeof(number));
 
-    // Then induce errors in the data based on the BER, if simulating error conditions
+    // Then induce errors in the data based on the probabilities and BER
     unsigned long finalData = number;
     if (inducedErrors) {
-      finalData = induceErrors(number, ber);
+      finalData = induceErrors(number, ber, probabilityBurst, probabilityIsolated);
     }
     // Print the data with errors and checksum to the serial monitor
     Serial.print(finalData);
@@ -35,7 +42,7 @@ void loop() {
   // Increment the number to check the next integer
   number++; 
 
-    // If the number exceeds the limit, reset it to 2 to start over
+  // If the number exceeds the limit, reset it to 2 to start over
   if(number > primesUntil) {
     number = 2;
   }
@@ -53,8 +60,22 @@ bool isPrime(int num) {
   return true;
 }
 
-// Function to induce errors in the data
-unsigned long induceErrors(unsigned long data, float ber) {
+// Function to induce errors based on probabilities
+unsigned long induceErrors(unsigned long data, float ber, float probabilityBurst, float probabilityIsolated) {
+  float totalProbability = probabilityBurst + probabilityIsolated;
+  float randomValue = random(0, 100);
+
+  if (randomValue < (probabilityBurst / totalProbability) * 100) {
+    // Induce burst errors
+    return induceBurstErrors(data, burstLength);
+  } else {
+    // Induce isolated errors
+    return induceIsolatedErrors(data, ber);
+  }
+}
+
+// Function to induce isolated errors in the data
+unsigned long induceIsolatedErrors(unsigned long data, float ber) {
   unsigned long errorMask = 0;
   // Loop through each bit of the data
   for (int i = 0; i < 32; i++) {
@@ -64,6 +85,18 @@ unsigned long induceErrors(unsigned long data, float ber) {
     }
   }
   // Apply the error mask to the data, flipping bits where the error mask has 1s
+  return data ^ errorMask;
+}
+
+// Function to induce burst errors in the data
+unsigned long induceBurstErrors(unsigned long data, int burstLength) {
+  unsigned long errorMask = 0;
+  int startBit = random(0, 32 - burstLength); // Randomly select start bit for burst
+  // Create the burst error mask
+  for (int i = startBit; i < startBit + burstLength; i++) {
+    errorMask |= (1UL << i);
+  }
+  // Apply the burst error mask to the data
   return data ^ errorMask;
 }
 
