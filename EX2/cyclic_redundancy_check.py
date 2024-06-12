@@ -1,5 +1,3 @@
-
-
 # data: binary string
 # generator: binary string
 # return: remainder as binary string

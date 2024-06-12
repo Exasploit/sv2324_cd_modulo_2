@@ -18,6 +18,7 @@ def test_src():
 
     burst = burst_channel(new_data, burst_length)
 
+    print("Burst: " + burst)
     src_check = cyclic_redundancy_check(burst, generator)
     print("CRC: " + src_check)
     if src_check == '0' * (len(generator) - 1):
